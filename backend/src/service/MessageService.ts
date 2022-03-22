@@ -1,29 +1,15 @@
-import Message from '../typings/message';
+import models from '../models';
 
-export default class MessageService {
-  static addMessage(message: Message) {
-    this.messages.push(message);
-    return message;
-  }
+const addMessage = async (text: string, username: string) => {
+  const [user] = await this.user.getOrCreate(username);
+  return this.message.create({
+    text,
+    userId: user.id,
+  });
+};
 
-  static getById(messageId: number): Message {
-    return this.messages.find((message) => message.id === messageId);
-  }
+const findById = async (messageId: number) => models.Message.findByPk(messageId);
 
-  static messages: Message[] = [
-    {
-      id: 1,
-      userId: 1,
-      message: 'Hej hej!',
-    },
-    {
-      id: 2,
-      userId: 2,
-      message: 'Detta är ett meddelande',
-    },
-  ];
+const findAll = async () => models.Message.findAll();
 
-  static getMessages(): Message[] {
-    return this.messages;
-  }
-}
+export { addMessage, findById, findAll };

@@ -1,29 +1,37 @@
 import express from 'express';
-import MessageService from './service/MessageService';
-import Message from './typings/message';
+import bodyParser from 'body-parser';
+import 'dotenv/config';
+
+import { sequelize, createUsersWithMessages } from './models';
+import { findAll, findById, addMessage } from './service/MessageService';
 
 const app = express();
+app.use(bodyParser.json());
 
-app.get('/messages', (_req, res) => {
-  res.send(MessageService.getMessages());
+app.get('/messages', async (_req, res) => {
+  res.send(await findAll());
 });
 
-app.get('/messages/:messageId', (_req, res) => {
+app.get('/messages/:messageId', async (_req, res) => {
   // TODO handle if not a number
   const messageId = Number(_req.params.messageId);
-
-  res.send(MessageService.getById(messageId));
+  res.send(await findById(messageId));
 });
 
-app.post('messages', (req, res) => {
-  const message = req.body as Message;
-  MessageService.addMessage(message);
-  res.send('');
+app.post('/messages', async (req, res) => {
+  const { text, username } = req.body;
+  const message = await addMessage(text, username);
+  res.send(message);
 });
 
-// TODO PUT
+const eraseDatabaseOnSync = true;
+sequelize.sync({ force: eraseDatabaseOnSync }).then(() => {
+  if (eraseDatabaseOnSync) {
+    createUsersWithMessages();
+  }
 
-app.listen(3000, () => {
-  // eslint-disable-next-line no-console
-  console.log('App listening on port 3000!');
+  app.listen(process.env.PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Example app listening on port ${process.env.PORT}!`);
+  });
 });
