@@ -11,6 +11,10 @@ const addMessage = async (text: string, username: string) => {
 
 const findById = async (messageId: number) => models.Message.findByPk(messageId);
 
-const findAll = async () => models.Message.findAll();
+const findAll = async () => models.Message.findAll({ order: [['createdAt', 'DESC']] });
 
-export { addMessage, findById, findAll };
+const deleteMessage = async (messageId: number) => models.Message.delete(messageId);
+
+export {
+  addMessage, findById, findAll, deleteMessage,
+};

@@ -9,9 +9,11 @@ const getMessageModel = (sequelize, { DataTypes }) => {
     },
   });
 
-  Message.associate = (models) => {
-    Message.belongsTo(models.User);
+  Message.associate = (_models) => {
+    Message.belongsTo(_models.User);
   };
+
+  Message.delete = (messageId) => Message.destroy({ where: { id: messageId } });
 
   return Message;
 };
