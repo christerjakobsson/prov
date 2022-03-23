@@ -6,12 +6,17 @@ import MessageComponent from './MessageComponent';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import { TextField } from '@mui/material';
+import { TextField, Button } from '@mui/material';
+
+const BoxStyle = {
+  borderRadius: 5
+}
 
 function MessagesComponent() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fetchMessages = async () => {
     const messages = await MessageService.fetchAll();
@@ -23,26 +28,53 @@ function MessagesComponent() {
     fetchMessages();
   }, []);
 
-  const keyPress = async (e: KeyboardEvent<HTMLInputElement>) => {
-    if(e.keyCode == 13 && length) {
+  const addMessage = async () => {
+    setIsSubmitting(true)
+    if(message) {
       const result = await MessageService.addMessage(username, message);
-      setMessage("");
       if(result) {
+        setIsSubmitting(false)
+        setMessage("");
         fetchMessages();
       }
     }
   }
 
+  const keyPress = async (e: KeyboardEvent<HTMLInputElement>) => {
+    if(e.keyCode === 13) {
+      addMessage()
+    }
+  }
+
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, bgcolor: 'background.paper', color: 'black' }}>
+    <Box sx={{ border: 1, borderRadius: 5, width: '100%', maxWidth: 600, bgcolor: 'background.paper', color: 'black' }}>
       <h1>Messages</h1>
       <nav aria-label="add-message">
-        <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' }}}>
+        <Box style={BoxStyle} component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' }}}>
           <div>
             <TextField value={username} onChange={(e) => setUsername(e.target.value)} id="username" label="Username" variant="outlined" />
           </div>
           <div>
-            <TextField value={message} onChange={(e) => setMessage(e.target.value)} id="message" label="Message" variant="outlined" onKeyDown={keyPress}/>
+            <TextField 
+              value={message} 
+              helperText={(isSubmitting && message.length) === 0 ? 'Message cant be empty!' : ' '} 
+              onChange={(e) => { 
+                setMessage(e.target.value); 
+                setIsSubmitting(false);
+              }}
+              id="message" 
+              label="Message" 
+              variant="outlined" 
+              onKeyDown={keyPress}/>
+          </div>
+          <div>
+            <Button 
+              style={{ marginBottom: '1rem' }} 
+              disabled={isSubmitting}
+              variant='contained' 
+              onClick={addMessage}>
+              Add message
+            </Button>
           </div>
         </Box>
       </nav>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Message from '../typings/Message';
-import { ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MessageService from '../services/MessageService';
 
