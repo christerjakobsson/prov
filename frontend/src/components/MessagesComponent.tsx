@@ -16,7 +16,6 @@ function MessagesComponent() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fetchMessages = async () => {
     const messages = await MessageService.fetchAll();
@@ -29,11 +28,9 @@ function MessagesComponent() {
   }, []);
 
   const addMessage = async () => {
-    setIsSubmitting(true)
     if(message) {
       const result = await MessageService.addMessage(username, message);
       if(result) {
-        setIsSubmitting(false)
         setMessage("");
         fetchMessages();
       }
@@ -57,20 +54,18 @@ function MessagesComponent() {
           <div>
             <TextField 
               value={message} 
-              helperText={(isSubmitting && message.length) === 0 ? 'Message cant be empty!' : ' '} 
-              onChange={(e) => { 
-                setMessage(e.target.value); 
-                setIsSubmitting(false);
-              }}
+              onChange={(e) => setMessage(e.target.value)}
               id="message" 
               label="Message" 
               variant="outlined" 
-              onKeyDown={keyPress}/>
+              onKeyDown={keyPress}
+              helperText={(!!message || message.length === 0) ? 'Message cant be empty' : ''} />
+              
           </div>
           <div>
             <Button 
               style={{ marginBottom: '1rem' }} 
-              disabled={isSubmitting}
+              disabled={(!message || message.length === 0)}
               variant='contained' 
               onClick={addMessage}>
               Add message
