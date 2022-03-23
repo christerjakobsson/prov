@@ -3,26 +3,12 @@ import bodyParser from 'body-parser';
 import 'dotenv/config';
 
 import { sequelize, createUsersWithMessages } from './models';
-import { findAll, findById, addMessage } from './service/MessageService';
+import messageRoutes from './routes/messageRoutes';
 
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/messages', async (_req, res) => {
-  res.send(await findAll());
-});
-
-app.get('/messages/:messageId', async (_req, res) => {
-  // TODO handle if not a number
-  const messageId = Number(_req.params.messageId);
-  res.send(await findById(messageId));
-});
-
-app.post('/messages', async (req, res) => {
-  const { text, username } = req.body;
-  const message = await addMessage(text, username);
-  res.send(message);
-});
+app.use('/messages', messageRoutes);
 
 const eraseDatabaseOnSync = true;
 sequelize.sync({ force: eraseDatabaseOnSync }).then(() => {

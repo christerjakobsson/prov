@@ -1,8 +1,9 @@
 import models from '../models';
 
 const addMessage = async (text: string, username: string) => {
-  const [user] = await this.user.getOrCreate(username);
-  return this.message.create({
+  const [user] = await models.User.getOrCreate(username);
+
+  return models.Message.create({
     text,
     userId: user.id,
   });
