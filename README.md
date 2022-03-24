@@ -12,19 +12,20 @@ To be able to run the backend follow these steps:
 6. You should now see some migrations running and that the server starts to listen on port 3000 by default.
 
 
-Some configuration are added in a `.env`.
+Some configuration are added in `.env`.
 * DATABASE
 * DATABASE_USER
 * DATABASE_PASSWORD  
 * PORT
 
 All with working default values.
+
 For documentation on endpoints see [Api Documentation](./API_DOC.md)
 
-
-### Summary
-
-
+## Tests
+to run the tests:
+* `yarn test` for running testsuites once.
+* `yarn test:watch` to rerun on each change.
 
 # Frontend
 
@@ -36,5 +37,3 @@ To start the frontend:
 4. 
 
 Both projects use eslint and to run linting in any of them execute `yarn lint` 
-
-
