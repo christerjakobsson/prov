@@ -12,19 +12,47 @@ router.get('/', async (_req, res) => {
 router.get('/:messageId', async (_req, res) => {
   // TODO handle if not a number
   const messageId = Number(_req.params.messageId);
-  res.send(await findById(messageId));
+
+  if (Number.isNaN(messageId)) {
+    return res.status(400).send({ error: 'messageId is not a number' });
+  }
+
+  const message = await findById(messageId);
+  if (!message) {
+    return res.sendStatus(404);
+  }
+
+  return res.send(message);
 });
 
 router.post('/', async (req, res) => {
   const { message, username } = req.body;
-  res.send(await addMessage(message, username));
+  if (!message) {
+    return res.status(400).send({ error: 'message cant be null' });
+  }
+
+  if (!username) {
+    return res.status(400).send({ error: 'username cant be null' });
+  }
+
+  return res.send(await addMessage(message, username));
 });
 
 router.delete('/:messageId', async (req, res) => {
   const messageId = Number(req.params.messageId);
-  const message = await deleteMessage(messageId);
 
-  res.sendStatus(message ? 200 : 400);
+  if (Number.isNaN(messageId)) {
+    return res.status(400).send({ error: 'messageId is not a number' });
+  }
+
+  const message = await findById(messageId);
+  if (!message) {
+    return res.sendStatus(404);
+  }
+
+  const isDeleted = await deleteMessage(messageId);
+
+  return res.sendStatus(isDeleted ? 204 : 400);
 });
 
 export default router;
